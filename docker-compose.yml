@@ -1,0 +1,30 @@
+networks: 
+  asa-network:    
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+services: 
+  db:
+    image: postgres
+    container_name: asa_database_postgreSQL
+    environment:
+      POSTGRES_PASSWORD: banco123
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data 
+    networks:
+      asa-network:
+        ipv4_address: 172.20.0.6
+
+  web:
+    depends_on:
+      - db
+    build: .
+    container_name: asa_app_production
+    ports:
+      - "3000:3000"
+    networks:
+      asa-network:
+        ipv4_address: 172.20.0.5
